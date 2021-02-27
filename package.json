@@ -1,10 +1,10 @@
 {
-  "name": "chessground",
+  "name": "octadground",
   "version": "7.11.0",
-  "description": "lichess.org chess ui",
+  "description": "lioctad.org chess ui",
   "type": "commonjs",
-  "main": "chessground.js",
-  "typings": "chessground.d.ts",
+  "main": "octadground.js",
+  "typings": "octadground.d.ts",
   "dependencies": {},
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17",
@@ -34,18 +34,18 @@
     "/src/*.ts",
     "!/rollup.config.js"
   ],
-  "repository": "https://github.com/ornicar/chessground",
+  "repository": "https://github.com/dechristopher/octadground",
   "keywords": [
-    "chess",
-    "lichess",
-    "lichess.org",
-    "chessboard",
+    "octad",
+    "lioctad",
+    "lioctad.org",
+    "board",
     "ui",
     "typescript"
   ],
-  "author": "Thibault Duplessis (https://github.com/ornicar)",
+  "author": "Andrew DeChristopher (https://github.com/dechristopher)",
   "license": "GPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/ornicar/chessground/issues"
+    "url": "https://github.com/dechristopher/octadground/issues"
   }
 }

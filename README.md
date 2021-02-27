@@ -1,31 +1,20 @@
-# Chessground
+# Octadground
 
-[![Continuous Integration](https://github.com/ornicar/chessground/workflows/Continuous%20Integration/badge.svg)](https://github.com/ornicar/chessground/actions?query=workflow%3A%22Continuous+Integration%22)
-[![npm](https://img.shields.io/npm/v/chessground)](https://www.npmjs.com/package/chessground)
-
-![Chessground in 2D and 3D](/screenshot/twin.jpg)
-
-_Chessground_ is a free/libre open source chess UI developed for
-[lichess.org](https://lichess.org).
+_Octadground_ is a free/libre open source octad UI developed for
+[lioctad.org](https://lioctad.org).
 It targets modern browsers, as well as mobile development using Cordova.
+It is based off of the open source [Chessground](https://github.com/ornicar/chessground)
+library.
 
 ## License
 
-Chessground is distributed under the **GPL-3.0 license** (or any later version,
+Octadground is distributed under the **GPL-3.0 license** (or any later version,
 at your option).
-When you use Chessground for your website, your combined work may be
+When you use Octadground for your website, your combined work may be
 distributed only under the GPL. **You must release your source code** to the
 users of your website.
 
 Please read more about GPL for JavaScript on [greendrake.info/#nfy0](http://greendrake.info/#nfy0).
-
-## Demos
-
-- [Chess TV](https://lichess.org/tv)
-- [Board editor](https://lichess.org/editor)
-- [Puzzles](https://lichess.org/training)
-- [Analysis board](https://lichess.org/ofWXRFGy)
-- [Game preview](https://lichess.org/games)
 
 ## Features
 
@@ -48,43 +37,31 @@ Chessground is designed to fulfill all lichess.org web and mobile apps needs, so
   - Piece ghost element
   - Drop off revert or trash
 - Premove by click or drag
-- Drag new pieces onto the board (editor, Crazyhouse)
 - Animation of pieces: moving and fading away
 - Display last move, check, move destinations, and premove destinations (hover effects possible)
 - Import and export positions in FEN notation
 - User callbacks
-- No chess logic inside: can be used for [chess variants](https://lichess.org/variant)
 
 ## Installation
 
 ```sh
-npm install --save chessground
+npm install --save octadground
 ```
 
 ### Usage
 
 ```js
-const Chessground = require('chessground').Chessground;
+const Octadground = require('octadground').Octadground;
 
 const config = {};
-const ground = Chessground(document.body, config);
+const ground = Octadground(document.body, config);
 ```
-
-### Wrappers
-
-- React: [ruilisi/react-chessground](https://github.com/ruilisi/react-chessground)
-- Vue.js: [vitogit/vue-chessboard](https://github.com/vitogit/vue-chessboard)
-- Angular: [topce/ngx-chessground](https://github.com/topce/ngx-chessground)
-
-More? Please make a pull request to include it here.
 
 ## Documentation
 
-- [Config types](https://github.com/ornicar/chessground/tree/master/src/config.ts)
-- [Default config values](https://github.com/ornicar/chessground/tree/master/src/state.ts)
-- [API type signatures](https://github.com/ornicar/chessground/tree/master/src/api.ts)
-- [Examples repo](https://github.com/ornicar/chessground-examples/tree/master/src/units)
-- [Base CSS](https://github.com/ornicar/chessground-examples/blob/master/assets/chessground.css)
+- [Config types](https://github.com/dechristopher/octadground/tree/master/src/config.ts)
+- [Default config values](https://github.com/dechristopher/octadground/tree/master/src/state.ts)
+- [API type signatures](https://github.com/dechristopher/octadground/tree/master/src/api.ts)
 
 ## Development
 

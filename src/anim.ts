@@ -1,16 +1,16 @@
 import { State } from './state';
 import * as util from './util';
-import * as cg from './types';
+import * as og from './types';
 
 export type Mutation<A> = (state: State) => A;
 
 // 0,1 animation goal
 // 2,3 animation current status
-export type AnimVector = cg.NumberQuad;
+export type AnimVector = og.NumberQuad;
 
-export type AnimVectors = Map<cg.Key, AnimVector>;
+export type AnimVectors = Map<og.Key, AnimVector>;
 
-export type AnimFadings = Map<cg.Key, cg.Piece>;
+export type AnimFadings = Map<og.Key, og.Piece>;
 
 export interface AnimPlan {
   anims: AnimVectors;
@@ -19,7 +19,7 @@ export interface AnimPlan {
 
 export interface AnimCurrent {
   start: DOMHighResTimeStamp;
-  frequency: cg.KHz;
+  frequency: og.KHz;
   plan: AnimPlan;
 }
 
@@ -34,13 +34,13 @@ export function render<A>(mutation: Mutation<A>, state: State): A {
 }
 
 interface AnimPiece {
-  key: cg.Key;
-  pos: cg.Pos;
-  piece: cg.Piece;
+  key: og.Key;
+  pos: og.Pos;
+  piece: og.Piece;
 }
-type AnimPieces = Map<cg.Key, AnimPiece>;
+type AnimPieces = Map<og.Key, AnimPiece>;
 
-function makePiece(key: cg.Key, piece: cg.Piece): AnimPiece {
+function makePiece(key: og.Key, piece: og.Piece): AnimPiece {
   return {
     key: key,
     pos: util.key2pos(key),
@@ -54,14 +54,14 @@ function closer(piece: AnimPiece, pieces: AnimPiece[]): AnimPiece | undefined {
   })[0];
 }
 
-function computePlan(prevPieces: cg.Pieces, current: State): AnimPlan {
+function computePlan(prevPieces: og.Pieces, current: State): AnimPlan {
   const anims: AnimVectors = new Map(),
-    animedOrigs: cg.Key[] = [],
+    animedOrigs: og.Key[] = [],
     fadings: AnimFadings = new Map(),
     missings: AnimPiece[] = [],
     news: AnimPiece[] = [],
     prePieces: AnimPieces = new Map();
-  let curP: cg.Piece | undefined, preP: AnimPiece | undefined, vector: cg.NumberPair;
+  let curP: og.Piece | undefined, preP: AnimPiece | undefined, vector: og.NumberPair;
   for (const [k, p] of prevPieces) {
     prePieces.set(k, makePiece(k, p));
   }
@@ -122,7 +122,7 @@ function step(state: State, now: DOMHighResTimeStamp): void {
 
 function animate<A>(mutation: Mutation<A>, state: State): A {
   // clone state before mutating it
-  const prevPieces: cg.Pieces = new Map(state.pieces);
+  const prevPieces: og.Pieces = new Map(state.pieces);
 
   const result = mutation(state);
   const plan = computePlan(prevPieces, state);

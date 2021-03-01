@@ -6,14 +6,14 @@ export default {
   input: 'src/index.js',
   output: [
     {
-      file: 'dist/chessground.js',
+      file: 'dist/octadground.js',
       format: 'iife',
-      name: 'Chessground',
+      name: 'Octadground',
     },
     {
-      file: 'dist/chessground.min.js',
+      file: 'dist/octadground.min.js',
       format: 'iife',
-      name: 'Chessground',
+      name: 'Octadground',
       plugins: [
         terser({
           safari10: true,

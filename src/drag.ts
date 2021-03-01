@@ -2,23 +2,23 @@ import { State } from './state';
 import * as board from './board';
 import * as util from './util';
 import { clear as drawClear } from './draw';
-import * as cg from './types';
+import * as og from './types';
 import { anim } from './anim';
 
 export interface DragCurrent {
-  orig: cg.Key; // orig key of dragging piece
-  piece: cg.Piece;
-  origPos: cg.NumberPair; // first event position
-  pos: cg.NumberPair; // latest event position
+  orig: og.Key; // orig key of dragging piece
+  piece: og.Piece;
+  origPos: og.NumberPair; // first event position
+  pos: og.NumberPair; // latest event position
   started: boolean; // whether the drag has started; as per the distance setting
-  element: cg.PieceNode | (() => cg.PieceNode | undefined);
+  element: og.PieceNode | (() => og.PieceNode | undefined);
   newPiece?: boolean; // it it a new piece from outside the board
   force?: boolean; // can the new piece replace an existing one (editor)
-  previouslySelected?: cg.Key;
+  previouslySelected?: og.Key;
   originTarget: EventTarget | null;
 }
 
-export function start(s: State, e: cg.MouchEvent): void {
+export function start(s: State, e: og.MouchEvent): void {
   if (!e.isTrusted || (e.button !== undefined && e.button !== 0)) return; // only touch or left click
   if (e.touches && e.touches.length > 1) return; // support one finger touch only
   const bounds = s.dom.bounds(),
@@ -34,7 +34,7 @@ export function start(s: State, e: cg.MouchEvent): void {
   // (and the board is not for viewing only), touches are likely intended to
   // select squares.
   if (
-    e.cancelable !== false &&
+    e.cancelable &&
     (!e.touches || !s.movable.color || piece || previouslySelected || pieceCloseTo(s, position))
   )
     e.preventDefault();
@@ -59,7 +59,7 @@ export function start(s: State, e: cg.MouchEvent): void {
       previouslySelected,
       originTarget: e.target,
     };
-    element.cgDragging = true;
+    element.ogDragging = true;
     element.classList.add('dragging');
     // place ghost
     const ghost = s.dom.elements.ghost;
@@ -76,19 +76,19 @@ export function start(s: State, e: cg.MouchEvent): void {
   s.dom.redraw();
 }
 
-function pieceCloseTo(s: State, pos: cg.NumberPair): boolean {
+function pieceCloseTo(s: State, pos: og.NumberPair): boolean {
   const asWhite = board.whitePov(s),
     bounds = s.dom.bounds(),
-    radiusSq = Math.pow(bounds.width / 8, 2);
+    radiusSq = Math.pow(bounds.width / 4, 2);
   for (const key in s.pieces) {
-    const center = util.computeSquareCenter(key as cg.Key, asWhite, bounds);
+    const center = util.computeSquareCenter(key as og.Key, asWhite, bounds);
     if (util.distanceSq(center, pos) <= radiusSq) return true;
   }
   return false;
 }
 
-export function dragNewPiece(s: State, piece: cg.Piece, e: cg.MouchEvent, force?: boolean): void {
-  const key: cg.Key = 'a0';
+export function dragNewPiece(s: State, piece: og.Piece, e: og.MouchEvent, force?: boolean): void {
+  const key: og.Key = 'a0';
   s.pieces.set(key, piece);
   s.dom.redraw();
 
@@ -125,15 +125,15 @@ function processDrag(s: State): void {
         if (typeof cur.element === 'function') {
           const found = cur.element();
           if (!found) return;
-          found.cgDragging = true;
+          found.ogDragging = true;
           found.classList.add('dragging');
           cur.element = found;
         }
 
         const bounds = s.dom.bounds();
         util.translateAbs(cur.element, [
-          cur.pos[0] - bounds.left - bounds.width / 16,
-          cur.pos[1] - bounds.top - bounds.height / 16,
+          cur.pos[0] - bounds.left - bounds.width / 8,
+          cur.pos[1] - bounds.top - bounds.height / 8,
         ]);
       }
     }
@@ -141,14 +141,14 @@ function processDrag(s: State): void {
   });
 }
 
-export function move(s: State, e: cg.MouchEvent): void {
+export function move(s: State, e: og.MouchEvent): void {
   // support one finger touch only
   if (s.draggable.current && (!e.touches || e.touches.length < 2)) {
     s.draggable.current.pos = util.eventPosition(e)!;
   }
 }
 
-export function end(s: State, e: cg.MouchEvent): void {
+export function end(s: State, e: og.MouchEvent): void {
   const cur = s.draggable.current;
   if (!cur) return;
   // create no corresponding mouse event
@@ -201,10 +201,10 @@ function removeDragElements(s: State): void {
   if (e.ghost) util.setVisible(e.ghost, false);
 }
 
-function pieceElementByKey(s: State, key: cg.Key): cg.PieceNode | undefined {
+function pieceElementByKey(s: State, key: og.Key): og.PieceNode | undefined {
   let el = s.dom.elements.board.firstChild;
   while (el) {
-    if ((el as cg.KeyedNode).cgKey === key && (el as cg.KeyedNode).tagName === 'PIECE') return el as cg.PieceNode;
+    if ((el as og.KeyedNode).ogKey === key && (el as og.KeyedNode).tagName === 'PIECE') return el as og.PieceNode;
     el = el.nextSibling;
   }
   return;

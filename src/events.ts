@@ -3,10 +3,10 @@ import * as drag from './drag';
 import * as draw from './draw';
 import { drop } from './drop';
 import { isRightButton } from './util';
-import * as cg from './types';
+import * as og from './types';
 
-type MouchBind = (e: cg.MouchEvent) => void;
-type StateMouchBind = (d: State, e: cg.MouchEvent) => void;
+type MouchBind = (e: og.MouchEvent) => void;
+type StateMouchBind = (d: State, e: og.MouchEvent) => void;
 
 export function bindBoard(s: State, boundsUpdated: () => void): void {
   const boardEl = s.dom.elements.board;
@@ -34,13 +34,13 @@ export function bindBoard(s: State, boundsUpdated: () => void): void {
 }
 
 // returns the unbind function
-export function bindDocument(s: State, boundsUpdated: () => void): cg.Unbind {
-  const unbinds: cg.Unbind[] = [];
+export function bindDocument(s: State, boundsUpdated: () => void): og.Unbind {
+  const unbinds: og.Unbind[] = [];
 
   // Old versions of Edge and Safari do not support ResizeObserver. Send
-  // chessground.resize if a user action has changed the bounds of the board.
+  // octadground.resize if a user action has changed the bounds of the board.
   if (!s.dom.relative && s.resizable && !('ResizeObserver' in window)) {
-    unbinds.push(unbindable(document.body, 'chessground.resize', boundsUpdated));
+    unbinds.push(unbindable(document.body, 'octadground.resize', boundsUpdated));
   }
 
   if (!s.viewOnly) {
@@ -63,7 +63,7 @@ function unbindable(
   eventName: string,
   callback: EventListener,
   options?: AddEventListenerOptions
-): cg.Unbind {
+): og.Unbind {
   el.addEventListener(eventName, callback, options);
   return () => el.removeEventListener(eventName, callback, options);
 }

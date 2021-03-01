@@ -1,7 +1,7 @@
 {
   "name": "octadground",
   "version": "7.11.0",
-  "description": "lioctad.org chess ui",
+  "description": "lioctad.org octad ui",
   "type": "commonjs",
   "main": "octadground.js",
   "typings": "octadground.d.ts",

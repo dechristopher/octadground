@@ -6,6 +6,8 @@ It targets modern browsers, as well as mobile development using Cordova.
 It is based off of the open source [Chessground](https://github.com/ornicar/chessground)
 library.
 
+![Octadground board](/screenshots/board.png)
+
 ## License
 
 Octadground is distributed under the **GPL-3.0 license** (or any later version,
@@ -18,7 +20,7 @@ Please read more about GPL for JavaScript on [greendrake.info/#nfy0](http://gree
 
 ## Features
 
-Chessground is designed to fulfill all lichess.org web and mobile apps needs, so it is pretty featureful.
+Octadground is designed to fulfill all lioctad.org web and mobile apps needs, so it is pretty featureful.
 
 - Well typed with TypeScript
 - Fast. Uses a custom DOM diff algorithm to reduce DOM writes to the absolute minimum.

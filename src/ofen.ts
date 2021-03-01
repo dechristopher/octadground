@@ -1,9 +1,9 @@
 import { pos2key, invRanks } from './util';
-import * as cg from './types';
+import * as og from './types';
 
-export const initial: cg.FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
+export const initial: og.OFEN = 'ppkn/4/4/NKPP';
 
-const roles: { [letter: string]: cg.Role } = {
+const roles: { [letter: string]: og.Role } = {
   p: 'pawn',
   r: 'rook',
   n: 'knight',
@@ -21,10 +21,10 @@ const letters = {
   king: 'k',
 };
 
-export function read(fen: cg.FEN): cg.Pieces {
+export function read(fen: og.OFEN): og.Pieces {
   if (fen === 'start') fen = initial;
-  const pieces: cg.Pieces = new Map();
-  let row = 7,
+  const pieces: og.Pieces = new Map();
+  let row = 3,
     col = 0;
   for (const c of fen) {
     switch (c) {
@@ -55,12 +55,12 @@ export function read(fen: cg.FEN): cg.Pieces {
   return pieces;
 }
 
-export function write(pieces: cg.Pieces): cg.FEN {
+export function write(pieces: og.Pieces): og.OFEN {
   return invRanks
     .map(y =>
-      cg.files
+      og.files
         .map(x => {
-          const piece = pieces.get((x + y) as cg.Key);
+          const piece = pieces.get((x + y) as og.Key);
           if (piece) {
             const letter = letters[piece.role];
             return piece.color === 'white' ? letter.toUpperCase() : letter;

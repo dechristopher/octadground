@@ -1,21 +1,21 @@
 import { HeadlessState } from './state';
 import { setCheck, setSelected } from './board';
-import { read as fenRead } from './fen';
+import { read as fenRead } from './ofen';
 import { DrawShape, DrawBrush } from './draw';
-import * as cg from './types';
+import * as og from './types';
 
 export interface Config {
-  fen?: cg.FEN; // chess position in Forsyth notation
-  orientation?: cg.Color; // board orientation. white | black
-  turnColor?: cg.Color; // turn to play. white | black
-  check?: cg.Color | boolean; // true for current color, false to unset
-  lastMove?: cg.Key[]; // squares part of the last move ["c3", "c4"]
-  selected?: cg.Key; // square currently selected "a1"
+  ofen?: og.OFEN; // octad position in Octad Forsyth Notation
+  orientation?: og.Color; // board orientation. white | black
+  turnColor?: og.Color; // turn to play. white | black
+  check?: og.Color | boolean; // true for current color, false to unset
+  lastMove?: og.Key[]; // squares part of the last move ["c2", "c3"]
+  selected?: og.Key; // square currently selected "a1"
   coordinates?: boolean; // include coords attributes
   autoCastle?: boolean; // immediately complete the castle by moving the rook after king move
   viewOnly?: boolean; // don't bind events: the user will never be able to move pieces around
-  disableContextMenu?: boolean; // because who needs a context menu on a chessboard
-  resizable?: boolean; // listens to chessground.resize on document.body to clear bounds cache
+  disableContextMenu?: boolean; // because who needs a context menu on an octad board
+  resizable?: boolean; // listens to octadground.resize on document.body to clear bounds cache
   addPieceZIndex?: boolean; // adds z-index values to pieces (for 3D)
   // pieceKey: boolean; // add a data-key attribute to piece elements
   highlight?: {
@@ -28,12 +28,12 @@ export interface Config {
   };
   movable?: {
     free?: boolean; // all moves are valid - board editor
-    color?: cg.Color | 'both'; // color that can move. white | black | both | undefined
-    dests?: cg.Dests; // valid moves. {"a2" ["a3" "a4"] "b1" ["a3" "c3"]}
+    color?: og.Color | 'both'; // color that can move. white | black | both | undefined
+    dests?: og.Dests; // valid moves. {"a2" ["a3" "a4"] "b1" ["a3" "c3"]}
     showDests?: boolean; // whether to add the move-dest class on squares
     events?: {
-      after?: (orig: cg.Key, dest: cg.Key, metadata: cg.MoveMetadata) => void; // called after the move has been played
-      afterNewPiece?: (role: cg.Role, key: cg.Key, metadata: cg.MoveMetadata) => void; // called after a new piece is dropped on the board
+      after?: (orig: og.Key, dest: og.Key, metadata: og.MoveMetadata) => void; // called after the move has been played
+      afterNewPiece?: (role: og.Role, key: og.Key, metadata: og.MoveMetadata) => void; // called after a new piece is dropped on the board
     };
     rookCastle?: boolean; // castle by moving the king to the rook
   };
@@ -41,23 +41,23 @@ export interface Config {
     enabled?: boolean; // allow premoves for color that can not move
     showDests?: boolean; // whether to add the premove-dest class on squares
     castle?: boolean; // whether to allow king castle premoves
-    dests?: cg.Key[]; // premove destinations for the current selection
+    dests?: og.Key[]; // premove destinations for the current selection
     events?: {
-      set?: (orig: cg.Key, dest: cg.Key, metadata?: cg.SetPremoveMetadata) => void; // called after the premove has been set
+      set?: (orig: og.Key, dest: og.Key, metadata?: og.SetPremoveMetadata) => void; // called after the premove has been set
       unset?: () => void; // called after the premove has been unset
     };
   };
   predroppable?: {
     enabled?: boolean; // allow predrops for color that can not move
     events?: {
-      set?: (role: cg.Role, key: cg.Key) => void; // called after the predrop has been set
+      set?: (role: og.Role, key: og.Key) => void; // called after the predrop has been set
       unset?: () => void; // called after the predrop has been unset
     };
   };
   draggable?: {
     enabled?: boolean; // allow moves & premoves to use drag'n drop
     distance?: number; // minimum distance to initiate a drag; in pixels
-    autoDistance?: boolean; // lets chessground set distance to zero when user drags pieces
+    autoDistance?: boolean; // lets octadground set distance to zero when user drags pieces
     showGhost?: boolean; // show ghost of piece being dragged
     deleteOnDropOff?: boolean; // delete a piece when it is dropped off the board
   };
@@ -69,10 +69,10 @@ export interface Config {
     change?: () => void; // called after the situation changes on the board
     // called after a piece has been moved.
     // capturedPiece is undefined or like {color: 'white'; 'role': 'queen'}
-    move?: (orig: cg.Key, dest: cg.Key, capturedPiece?: cg.Piece) => void;
-    dropNewPiece?: (piece: cg.Piece, key: cg.Key) => void;
-    select?: (key: cg.Key) => void; // called when a square is selected
-    insert?: (elements: cg.Elements) => void; // when the board DOM has been (re)inserted
+    move?: (orig: og.Key, dest: og.Key, capturedPiece?: og.Piece) => void;
+    dropNewPiece?: (piece: og.Piece, key: og.Key) => void;
+    select?: (key: og.Key) => void; // called when a square is selected
+    insert?: (elements: og.Elements) => void; // when the board DOM has been (re)inserted
   };
   drawable?: {
     enabled?: boolean; // can draw
@@ -95,9 +95,9 @@ export function configure(state: HeadlessState, config: Config): void {
 
   merge(state, config);
 
-  // if a fen was provided, replace the pieces
-  if (config.fen) {
-    state.pieces = fenRead(config.fen);
+  // if an ofen was provided, replace the pieces
+  if (config.ofen) {
+    state.pieces = fenRead(config.ofen);
     state.drawable.shapes = [];
   }
 
@@ -116,8 +116,8 @@ export function configure(state: HeadlessState, config: Config): void {
   if (!state.animation.duration || state.animation.duration < 100) state.animation.enabled = false;
 
   if (!state.movable.rookCastle && state.movable.dests) {
-    const rank = state.movable.color === 'white' ? '1' : '8',
-      kingStartPos = ('e' + rank) as cg.Key,
+    const rank = state.movable.color === 'white' ? '1' : '4',
+      kingStartPos = ('e' + rank) as og.Key,
       dests = state.movable.dests.get(kingStartPos),
       king = state.pieces.get(kingStartPos);
     if (!dests || !king || king.role !== 'king') return;
@@ -125,8 +125,8 @@ export function configure(state: HeadlessState, config: Config): void {
       kingStartPos,
       dests.filter(
         d =>
-          !(d === 'a' + rank && dests.includes(('c' + rank) as cg.Key)) &&
-          !(d === 'h' + rank && dests.includes(('g' + rank) as cg.Key))
+          !(d === 'a' + rank && dests.includes(('c' + rank) as og.Key)) &&
+          !(d === 'd' + rank && dests.includes(('g' + rank) as og.Key))
       )
     );
   }

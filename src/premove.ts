@@ -1,5 +1,5 @@
 import * as util from './util';
-import * as cg from './types';
+import * as og from './types';
 
 type Mobility = (x1: number, y1: number, x2: number, y2: number) => boolean;
 
@@ -7,7 +7,7 @@ function diff(a: number, b: number): number {
   return Math.abs(a - b);
 }
 
-function pawn(color: cg.Color): Mobility {
+function pawn(color: og.Color): Mobility {
   return (x1, y1, x2, y2) =>
     diff(x1, x2) < 2 &&
     (color === 'white'
@@ -34,7 +34,7 @@ export const queen: Mobility = (x1, y1, x2, y2) => {
   return bishop(x1, y1, x2, y2) || rook(x1, y1, x2, y2);
 };
 
-function king(color: cg.Color, rookFiles: number[], canCastle: boolean): Mobility {
+function king(color: og.Color, rookFiles: number[], canCastle: boolean): Mobility {
   return (x1, y1, x2, y2) =>
     (diff(x1, x2) < 2 && diff(y1, y2) < 2) ||
     (canCastle &&
@@ -44,7 +44,7 @@ function king(color: cg.Color, rookFiles: number[], canCastle: boolean): Mobilit
         rookFiles.includes(x2)));
 }
 
-function rookFilesOf(pieces: cg.Pieces, color: cg.Color) {
+function rookFilesOf(pieces: og.Pieces, color: og.Color) {
   const backrank = color === 'white' ? '1' : '8';
   const files = [];
   for (const [key, piece] of pieces) {
@@ -55,7 +55,7 @@ function rookFilesOf(pieces: cg.Pieces, color: cg.Color) {
   return files;
 }
 
-export function premove(pieces: cg.Pieces, key: cg.Key, canCastle: boolean): cg.Key[] {
+export function premove(pieces: og.Pieces, key: og.Key, canCastle: boolean): og.Key[] {
   const piece = pieces.get(key);
   if (!piece) return [];
   const pos = util.key2pos(key),

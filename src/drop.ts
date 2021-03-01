@@ -1,10 +1,10 @@
 import { State } from './state';
-import * as cg from './types';
+import * as og from './types';
 import * as board from './board';
 import * as util from './util';
 import { cancel as dragCancel } from './drag';
 
-export function setDropMode(s: State, piece?: cg.Piece): void {
+export function setDropMode(s: State, piece?: og.Piece): void {
   s.dropmode = {
     active: true,
     piece,
@@ -18,7 +18,7 @@ export function cancelDropMode(s: State): void {
   };
 }
 
-export function drop(s: State, e: cg.MouchEvent): void {
+export function drop(s: State, e: og.MouchEvent): void {
   if (!s.dropmode.active) return;
 
   board.unsetPremove(s);

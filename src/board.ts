@@ -1,7 +1,7 @@
 import { HeadlessState } from './state';
 import { pos2key, key2pos, opposite, distanceSq, allPos, computeSquareCenter } from './util';
 import { premove, queen, knight } from './premove';
-import * as cg from './types';
+import * as og from './types';
 
 export function callUserFunction<T extends (...args: any[]) => void>(f: T | undefined, ...args: Parameters<T>): void {
   if (f) setTimeout(() => f(...args), 1);
@@ -19,14 +19,14 @@ export function reset(state: HeadlessState): void {
   unsetPredrop(state);
 }
 
-export function setPieces(state: HeadlessState, pieces: cg.PiecesDiff): void {
+export function setPieces(state: HeadlessState, pieces: og.PiecesDiff): void {
   for (const [key, piece] of pieces) {
     if (piece) state.pieces.set(key, piece);
     else state.pieces.delete(key);
   }
 }
 
-export function setCheck(state: HeadlessState, color: cg.Color | boolean): void {
+export function setCheck(state: HeadlessState, color: og.Color | boolean): void {
   state.check = undefined;
   if (color === true) color = state.turnColor;
   if (color)
@@ -37,7 +37,7 @@ export function setCheck(state: HeadlessState, color: cg.Color | boolean): void 
     }
 }
 
-function setPremove(state: HeadlessState, orig: cg.Key, dest: cg.Key, meta: cg.SetPremoveMetadata): void {
+function setPremove(state: HeadlessState, orig: og.Key, dest: og.Key, meta: og.SetPremoveMetadata): void {
   unsetPredrop(state);
   state.premovable.current = [orig, dest];
   callUserFunction(state.premovable.events.set, orig, dest, meta);
@@ -50,7 +50,7 @@ export function unsetPremove(state: HeadlessState): void {
   }
 }
 
-function setPredrop(state: HeadlessState, role: cg.Role, key: cg.Key): void {
+function setPredrop(state: HeadlessState, role: og.Role, key: og.Key): void {
   unsetPremove(state);
   state.predroppable.current = { role, key };
   callUserFunction(state.predroppable.events.set, role, key);
@@ -64,17 +64,18 @@ export function unsetPredrop(state: HeadlessState): void {
   }
 }
 
-function tryAutoCastle(state: HeadlessState, orig: cg.Key, dest: cg.Key): boolean {
+function tryAutoCastle(state: HeadlessState, orig: og.Key, dest: og.Key): boolean {
   if (!state.autoCastle) return false;
 
   const king = state.pieces.get(orig);
   if (!king || king.role !== 'king') return false;
 
+  // TODO build octad castling functionality
   const origPos = key2pos(orig);
   const destPos = key2pos(dest);
-  if ((origPos[1] !== 0 && origPos[1] !== 7) || origPos[1] !== destPos[1]) return false;
+  if ((origPos[1] !== 0 && origPos[1] !== 3) || origPos[1] !== destPos[1]) return false;
   if (origPos[0] === 4 && !state.pieces.has(dest)) {
-    if (destPos[0] === 6) dest = pos2key([7, destPos[1]]);
+    if (destPos[0] === 6) dest = pos2key([3, destPos[1]]);
     else if (destPos[0] === 2) dest = pos2key([0, destPos[1]]);
   }
   const rook = state.pieces.get(dest);
@@ -93,7 +94,7 @@ function tryAutoCastle(state: HeadlessState, orig: cg.Key, dest: cg.Key): boolea
   return true;
 }
 
-export function baseMove(state: HeadlessState, orig: cg.Key, dest: cg.Key): cg.Piece | boolean {
+export function baseMove(state: HeadlessState, orig: og.Key, dest: og.Key): og.Piece | boolean {
   const origPiece = state.pieces.get(orig),
     destPiece = state.pieces.get(dest);
   if (orig === dest || !origPiece) return false;
@@ -110,7 +111,7 @@ export function baseMove(state: HeadlessState, orig: cg.Key, dest: cg.Key): cg.P
   return captured || true;
 }
 
-export function baseNewPiece(state: HeadlessState, piece: cg.Piece, key: cg.Key, force?: boolean): boolean {
+export function baseNewPiece(state: HeadlessState, piece: og.Piece, key: og.Key, force?: boolean): boolean {
   if (state.pieces.has(key)) {
     if (force) state.pieces.delete(key);
     else return false;
@@ -125,7 +126,7 @@ export function baseNewPiece(state: HeadlessState, piece: cg.Piece, key: cg.Key,
   return true;
 }
 
-function baseUserMove(state: HeadlessState, orig: cg.Key, dest: cg.Key): cg.Piece | boolean {
+function baseUserMove(state: HeadlessState, orig: og.Key, dest: og.Key): og.Piece | boolean {
   const result = baseMove(state, orig, dest);
   if (result) {
     state.movable.dests = undefined;
@@ -135,13 +136,13 @@ function baseUserMove(state: HeadlessState, orig: cg.Key, dest: cg.Key): cg.Piec
   return result;
 }
 
-export function userMove(state: HeadlessState, orig: cg.Key, dest: cg.Key): boolean {
+export function userMove(state: HeadlessState, orig: og.Key, dest: og.Key): boolean {
   if (canMove(state, orig, dest)) {
     const result = baseUserMove(state, orig, dest);
     if (result) {
       const holdTime = state.hold.stop();
       unselect(state);
-      const metadata: cg.MoveMetadata = {
+      const metadata: og.MoveMetadata = {
         premove: false,
         ctrlKey: state.stats.ctrlKey,
         holdTime,
@@ -161,7 +162,7 @@ export function userMove(state: HeadlessState, orig: cg.Key, dest: cg.Key): bool
   return false;
 }
 
-export function dropNewPiece(state: HeadlessState, orig: cg.Key, dest: cg.Key, force?: boolean): void {
+export function dropNewPiece(state: HeadlessState, orig: og.Key, dest: og.Key, force?: boolean): void {
   const piece = state.pieces.get(orig);
   if (piece && (canDrop(state, orig, dest) || force)) {
     state.pieces.delete(orig);
@@ -180,7 +181,7 @@ export function dropNewPiece(state: HeadlessState, orig: cg.Key, dest: cg.Key, f
   unselect(state);
 }
 
-export function selectSquare(state: HeadlessState, key: cg.Key, force?: boolean): void {
+export function selectSquare(state: HeadlessState, key: og.Key, force?: boolean): void {
   callUserFunction(state.events.select, key);
   if (state.selected) {
     if (state.selected === key && !state.draggable.enabled) {
@@ -200,7 +201,7 @@ export function selectSquare(state: HeadlessState, key: cg.Key, force?: boolean)
   }
 }
 
-export function setSelected(state: HeadlessState, key: cg.Key): void {
+export function setSelected(state: HeadlessState, key: og.Key): void {
   state.selected = key;
   if (isPremovable(state, key)) {
     state.premovable.dests = premove(state.pieces, key, state.premovable.castle);
@@ -213,7 +214,7 @@ export function unselect(state: HeadlessState): void {
   state.hold.cancel();
 }
 
-function isMovable(state: HeadlessState, orig: cg.Key): boolean {
+function isMovable(state: HeadlessState, orig: og.Key): boolean {
   const piece = state.pieces.get(orig);
   return (
     !!piece &&
@@ -221,13 +222,13 @@ function isMovable(state: HeadlessState, orig: cg.Key): boolean {
   );
 }
 
-export function canMove(state: HeadlessState, orig: cg.Key, dest: cg.Key): boolean {
+export function canMove(state: HeadlessState, orig: og.Key, dest: og.Key): boolean {
   return (
     orig !== dest && isMovable(state, orig) && (state.movable.free || !!state.movable.dests?.get(orig)?.includes(dest))
   );
 }
 
-function canDrop(state: HeadlessState, orig: cg.Key, dest: cg.Key): boolean {
+function canDrop(state: HeadlessState, orig: og.Key, dest: og.Key): boolean {
   const piece = state.pieces.get(orig);
   return (
     !!piece &&
@@ -236,31 +237,31 @@ function canDrop(state: HeadlessState, orig: cg.Key, dest: cg.Key): boolean {
   );
 }
 
-function isPremovable(state: HeadlessState, orig: cg.Key): boolean {
+function isPremovable(state: HeadlessState, orig: og.Key): boolean {
   const piece = state.pieces.get(orig);
   return !!piece && state.premovable.enabled && state.movable.color === piece.color && state.turnColor !== piece.color;
 }
 
-function canPremove(state: HeadlessState, orig: cg.Key, dest: cg.Key): boolean {
+function canPremove(state: HeadlessState, orig: og.Key, dest: og.Key): boolean {
   return (
     orig !== dest && isPremovable(state, orig) && premove(state.pieces, orig, state.premovable.castle).includes(dest)
   );
 }
 
-function canPredrop(state: HeadlessState, orig: cg.Key, dest: cg.Key): boolean {
+function canPredrop(state: HeadlessState, orig: og.Key, dest: og.Key): boolean {
   const piece = state.pieces.get(orig);
   const destPiece = state.pieces.get(dest);
   return (
     !!piece &&
     (!destPiece || destPiece.color !== state.movable.color) &&
     state.predroppable.enabled &&
-    (piece.role !== 'pawn' || (dest[1] !== '1' && dest[1] !== '8')) &&
+    (piece.role !== 'pawn' || (dest[1] !== '1' && dest[1] !== '4')) &&
     state.movable.color === piece.color &&
     state.turnColor !== piece.color
   );
 }
 
-export function isDraggable(state: HeadlessState, orig: cg.Key): boolean {
+export function isDraggable(state: HeadlessState, orig: og.Key): boolean {
   const piece = state.pieces.get(orig);
   return (
     !!piece &&
@@ -279,7 +280,7 @@ export function playPremove(state: HeadlessState): boolean {
   if (canMove(state, orig, dest)) {
     const result = baseUserMove(state, orig, dest);
     if (result) {
-      const metadata: cg.MoveMetadata = { premove: true };
+      const metadata: og.MoveMetadata = { premove: true };
       if (result !== true) metadata.captured = result;
       callUserFunction(state.movable.events.after, orig, dest, metadata);
       success = true;
@@ -289,7 +290,7 @@ export function playPremove(state: HeadlessState): boolean {
   return success;
 }
 
-export function playPredrop(state: HeadlessState, validate: (drop: cg.Drop) => boolean): boolean {
+export function playPredrop(state: HeadlessState, validate: (drop: og.Drop) => boolean): boolean {
   const drop = state.predroppable.current;
   let success = false;
   if (!drop) return false;
@@ -297,7 +298,7 @@ export function playPredrop(state: HeadlessState, validate: (drop: cg.Drop) => b
     const piece = {
       role: drop.role,
       color: state.movable.color,
-    } as cg.Piece;
+    } as og.Piece;
     if (baseNewPiece(state, piece, drop.key)) {
       callUserFunction(state.movable.events.afterNewPiece, drop.role, drop.key, {
         premove: false,
@@ -321,20 +322,20 @@ export function stop(state: HeadlessState): void {
   cancelMove(state);
 }
 
-export function getKeyAtDomPos(pos: cg.NumberPair, asWhite: boolean, bounds: ClientRect): cg.Key | undefined {
-  let file = Math.floor((8 * (pos[0] - bounds.left)) / bounds.width);
-  if (!asWhite) file = 7 - file;
-  let rank = 7 - Math.floor((8 * (pos[1] - bounds.top)) / bounds.height);
-  if (!asWhite) rank = 7 - rank;
-  return file >= 0 && file < 8 && rank >= 0 && rank < 8 ? pos2key([file, rank]) : undefined;
+export function getKeyAtDomPos(pos: og.NumberPair, asWhite: boolean, bounds: ClientRect): og.Key | undefined {
+  let file = Math.floor((4 * (pos[0] - bounds.left)) / bounds.width);
+  if (!asWhite) file = 3 - file;
+  let rank = 3 - Math.floor((4 * (pos[1] - bounds.top)) / bounds.height);
+  if (!asWhite) rank = 3 - rank;
+  return file >= 0 && file < 4 && rank >= 0 && rank < 4 ? pos2key([file, rank]) : undefined;
 }
 
 export function getSnappedKeyAtDomPos(
-  orig: cg.Key,
-  pos: cg.NumberPair,
+  orig: og.Key,
+  pos: og.NumberPair,
   asWhite: boolean,
   bounds: ClientRect
-): cg.Key | undefined {
+): og.Key | undefined {
   const origPos = key2pos(orig);
   const validSnapPos = allPos.filter(pos2 => {
     return queen(origPos[0], origPos[1], pos2[0], pos2[1]) || knight(origPos[0], origPos[1], pos2[0], pos2[1]);

@@ -1,11 +1,11 @@
 import { State } from './state';
 import { unselect, cancelMove, getKeyAtDomPos, getSnappedKeyAtDomPos, whitePov } from './board';
 import { eventPosition, isRightButton } from './util';
-import * as cg from './types';
+import * as og from './types';
 
 export interface DrawShape {
-  orig: cg.Key;
-  dest?: cg.Key;
+  orig: og.Key;
+  dest?: og.Key;
   brush?: string;
   modifiers?: DrawModifiers;
   piece?: DrawShapePiece;
@@ -13,8 +13,8 @@ export interface DrawShape {
 }
 
 export interface DrawShapePiece {
-  role: cg.Role;
-  color: cg.Color;
+  role: og.Role;
+  color: og.Color;
   scale?: number;
 }
 
@@ -51,17 +51,17 @@ export interface Drawable {
 }
 
 export interface DrawCurrent {
-  orig: cg.Key; // orig key of drawing
-  dest?: cg.Key; // shape dest, or undefined for circle
-  mouseSq?: cg.Key; // square being moused over
-  pos: cg.NumberPair; // relative current position
+  orig: og.Key; // orig key of drawing
+  dest?: og.Key; // shape dest, or undefined for circle
+  mouseSq?: og.Key; // square being moused over
+  pos: og.NumberPair; // relative current position
   brush: string; // brush name for shape
   snapToValidMove: boolean; // whether to snap to valid piece moves
 }
 
 const brushes = ['green', 'red', 'blue', 'yellow'];
 
-export function start(state: State, e: cg.MouchEvent): void {
+export function start(state: State, e: og.MouchEvent): void {
   // support one finger touch only
   if (e.touches && e.touches.length > 1) return;
   e.stopPropagation();
@@ -101,7 +101,7 @@ export function processDraw(state: State): void {
   });
 }
 
-export function move(state: State, e: cg.MouchEvent): void {
+export function move(state: State, e: og.MouchEvent): void {
   if (state.drawable.current) state.drawable.current.pos = eventPosition(e)!;
 }
 
@@ -128,7 +128,7 @@ export function clear(state: State): void {
   }
 }
 
-function eventBrush(e: cg.MouchEvent): string {
+function eventBrush(e: og.MouchEvent): string {
   const modA = (e.shiftKey || e.ctrlKey) && isRightButton(e);
   const modB = e.altKey || e.metaKey || e.getModifierState?.('AltGraph');
   return brushes[(modA ? 1 : 0) + (modB ? 2 : 0)];

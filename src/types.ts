@@ -3,7 +3,7 @@ export type Role = 'king' | 'queen' | 'rook' | 'bishop' | 'knight' | 'pawn';
 export type File = typeof files[number];
 export type Rank = typeof ranks[number];
 export type Key = 'a0' | `${File}${Rank}`;
-export type FEN = string;
+export type OFEN = string;
 export type Pos = [number, number];
 export interface Piece {
   role: Role;
@@ -67,14 +67,14 @@ export interface SetPremoveMetadata {
 export type MouchEvent = Event & Partial<MouseEvent & TouchEvent>;
 
 export interface KeyedNode extends HTMLElement {
-  cgKey: Key;
+  ogKey: Key;
 }
 export interface PieceNode extends KeyedNode {
   tagName: 'PIECE';
-  cgPiece: string;
-  cgAnimating?: boolean;
-  cgFading?: boolean;
-  cgDragging?: boolean;
+  ogPiece: string;
+  ogAnimating?: boolean;
+  ogFading?: boolean;
+  ogDragging?: boolean;
 }
 export interface SquareNode extends KeyedNode {
   tagName: 'SQUARE';
@@ -97,5 +97,5 @@ export type Milliseconds = number;
 export type KHz = number;
 
 export const colors = ['white', 'black'] as const;
-export const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] as const;
-export const ranks = ['1', '2', '3', '4', '5', '6', '7', '8'] as const;
+export const files = ['a', 'b', 'c', 'd'] as const;
+export const ranks = ['1', '2', '3', '4'] as const;

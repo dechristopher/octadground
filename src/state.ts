@@ -1,4 +1,4 @@
-import * as fen from './ofen';
+import * as ofen from './ofen';
 import { AnimCurrent } from './anim';
 import { DragCurrent } from './drag';
 import { Drawable } from './draw';
@@ -104,7 +104,7 @@ export interface State extends HeadlessState {
 
 export function defaults(): HeadlessState {
   return {
-    pieces: fen.read(fen.initial),
+    pieces: ofen.read(ofen.initial),
     orientation: 'white',
     turnColor: 'white',
     coordinates: true,

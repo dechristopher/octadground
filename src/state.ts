@@ -37,7 +37,7 @@ export interface HeadlessState {
       after?: (orig: og.Key, dest: og.Key, metadata: og.MoveMetadata) => void; // called after the move has been played
       afterNewPiece?: (role: og.Role, key: og.Key, metadata: og.MoveMetadata) => void; // called after a new piece is dropped on the board
     };
-    rookCastle: boolean; // castle by moving the king to the rook
+    pieceCastle: boolean; // castle by moving the king to the destination piece
   };
   premovable: {
     enabled: boolean; // allow premoves for color that can not move
@@ -127,7 +127,7 @@ export function defaults(): HeadlessState {
       color: 'both',
       showDests: true,
       events: {},
-      rookCastle: true,
+      pieceCastle: true,
     },
     premovable: {
       enabled: true,

@@ -35,7 +35,7 @@ export interface Config {
       after?: (orig: og.Key, dest: og.Key, metadata: og.MoveMetadata) => void; // called after the move has been played
       afterNewPiece?: (role: og.Role, key: og.Key, metadata: og.MoveMetadata) => void; // called after a new piece is dropped on the board
     };
-    rookCastle?: boolean; // castle by moving the king to the rook
+    pieceCastle?: boolean; // castle by moving the king to the piece
   };
   premovable?: {
     enabled?: boolean; // allow premoves for color that can not move
@@ -115,7 +115,7 @@ export function configure(state: HeadlessState, config: Config): void {
   // no need for such short animations
   if (!state.animation.duration || state.animation.duration < 100) state.animation.enabled = false;
 
-  if (!state.movable.rookCastle && state.movable.dests) {
+  if (!state.movable.pieceCastle && state.movable.dests) {
     const rank = state.movable.color === 'white' ? '1' : '4',
       kingStartPos = ('e' + rank) as og.Key,
       dests = state.movable.dests.get(kingStartPos),

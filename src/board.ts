@@ -70,7 +70,6 @@ function tryAutoCastle(state: HeadlessState, orig: og.Key, dest: og.Key): boolea
   const king = state.pieces.get(orig);
   if (!king || king.role !== 'king') return false;
 
-  // TODO build octad castling functionality
   const origPos = key2pos(orig);
   const destPos = key2pos(dest);
   if ((origPos[1] !== 0 && origPos[1] !== 3) || origPos[1] !== destPos[1]) return false;

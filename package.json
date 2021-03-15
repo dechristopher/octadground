@@ -1,22 +1,22 @@
 {
   "name": "octadground",
-  "version": "7.11.0",
+  "version": "1.0.0",
   "description": "lioctad.org octad ui",
   "type": "commonjs",
   "main": "octadground.js",
   "typings": "octadground.d.ts",
   "dependencies": {},
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^17",
-    "@rollup/plugin-typescript": "^8",
-    "@typescript-eslint/eslint-plugin": "^4",
-    "@typescript-eslint/parser": "^4",
-    "eslint": "^7",
-    "prettier": "^2",
-    "rollup": "^2",
-    "rollup-plugin-terser": "^7",
-    "tslib": "^2",
-    "typescript": "^4"
+    "@rollup/plugin-commonjs": "17",
+    "@rollup/plugin-typescript": "8",
+    "@typescript-eslint/eslint-plugin": "4",
+    "@typescript-eslint/parser": "4",
+    "eslint": "7",
+    "prettier": "2",
+    "rollup": "2",
+    "rollup-plugin-terser": "7",
+    "tslib": "2",
+    "typescript": "4"
   },
   "scripts": {
     "prepare": "npm run compile",

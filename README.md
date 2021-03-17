@@ -2,8 +2,7 @@
 
 _Octadground_ is a free/libre open source octad UI developed for
 [lioctad.org](https://lioctad.org).
-It targets modern browsers, as well as mobile development using Cordova.
-It is based off of the open source [Chessground](https://github.com/ornicar/chessground)
+It targets modern browsers and is based off of the open source [Chessground](https://github.com/ornicar/chessground)
 library.
 
 ![Octadground board](/screenshots/board.png)
@@ -41,7 +40,7 @@ Octadground is designed to fulfill all lioctad.org web and mobile apps needs, so
 - Premove by click or drag
 - Animation of pieces: moving and fading away
 - Display last move, check, move destinations, and premove destinations (hover effects possible)
-- Import and export positions in FEN notation
+- Import and export positions in OFEN notation
 - User callbacks
 
 ## Installation

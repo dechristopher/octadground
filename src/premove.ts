@@ -34,24 +34,53 @@ export const queen: Mobility = (x1, y1, x2, y2) => {
   return bishop(x1, y1, x2, y2) || rook(x1, y1, x2, y2);
 };
 
-function king(color: og.Color, rookFiles: number[], canCastle: boolean): Mobility {
+function king(color: og.Color, castleFiles: number[], canCastle: boolean): Mobility {
   return (x1, y1, x2, y2) =>
-    (diff(x1, x2) < 2 && diff(y1, y2) < 2) ||
-    (canCastle &&
-      y1 === y2 &&
-      y1 === (color === 'white' ? 0 : 7) &&
-      ((x1 === 4 && ((x2 === 2 && rookFiles.includes(0)) || (x2 === 6 && rookFiles.includes(7)))) ||
-        rookFiles.includes(x2)));
+    (diff(x1, x2) < 2 && diff(y1, y2) < 2) || // standard king moves
+    (canCastle && // if the king can castle
+      y1 === y2 && // as long as moves are on the same rank
+      y1 === (color === 'white' ? 0 : 3) && // as long as the rank is the correct rank for castling
+        castleFiles.includes(x2)); // possible castle files align with destination square
 }
 
-function rookFilesOf(pieces: og.Pieces, color: og.Color) {
-  const backrank = color === 'white' ? '1' : '8';
-  const files = [];
+function validCastleFiles(pieces: og.Pieces, color: og.Color) {
+  const backRank = color === 'white' ? '1' : '4';
+
+  const knightFile = color === 'white' ? 'a' : 'd';
+  const closePawnFile = color === 'white' ? 'c' : 'b';
+  const farPawnFile = color === 'white' ? 'd' : 'a';
+
+  const farPawnKey = color === 'white' ? 3 : 0;
+
+  let closePawnObstructing = false;
+
+  let files = [];
   for (const [key, piece] of pieces) {
-    if (key[1] === backrank && piece.color === color && piece.role === 'rook') {
+    // check knight
+    if (key[1] === backRank && key[0] === knightFile && piece.color === color && piece.role === 'knight') {
       files.push(util.key2pos(key)[0]);
+      continue
+    }
+    // check close pawn
+    if (key[1] === backRank && key[0] === closePawnFile && piece.color === color && piece.role === 'pawn') {
+      files.push(util.key2pos(key)[0]);
+      closePawnObstructing = true;
+      continue
+    }
+    // check far pawn
+    if (key[1] === backRank && key[0] === farPawnFile && piece.color === color && piece.role === 'pawn') {
+      // ensure close pawn isn't in the way
+      if (!closePawnObstructing) {
+        files.push(util.key2pos(key)[0]);
+      }
     }
   }
+
+  // remove far pawn from potential file list if it was checked before close pawn
+  if (closePawnObstructing && files.includes(farPawnKey)) {
+    files = files.filter((f) => f !== farPawnKey);
+  }
+
   return files;
 }
 
@@ -71,7 +100,7 @@ export function premove(pieces: og.Pieces, key: og.Key, canCastle: boolean): og.
         ? rook
         : r === 'queen'
         ? queen
-        : king(piece.color, rookFilesOf(pieces, piece.color), canCastle);
+        : king(piece.color, validCastleFiles(pieces, piece.color), canCastle);
   return util.allPos
     .filter(pos2 => (pos[0] !== pos2[0] || pos[1] !== pos2[1]) && mobility(pos[0], pos[1], pos2[0], pos2[1]))
     .map(util.pos2key);

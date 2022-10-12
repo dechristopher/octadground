@@ -121,16 +121,16 @@ function processDrag(s: State): void {
       if (!cur.started && util.distanceSq(cur.pos, cur.origPos) >= Math.pow(s.draggable.distance, 2))
         cur.started = true;
       if (cur.started) {
+        let currElement = cur.element;
         // support lazy elements
-        if (typeof cur.element === 'function') {
-          const found = cur.element();
+        if (typeof currElement === 'function') {
+          const found = currElement();
           if (!found) return;
           found.ogDragging = true;
           found.classList.add('dragging');
-          cur.element = found;
+          currElement = found;
         }
 
-        const currElement = cur.element;
         if (typeof currElement !== 'function') {
           const bounds = s.dom.bounds();
           util.translateAbs(currElement as HTMLElement, [

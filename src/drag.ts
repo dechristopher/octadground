@@ -121,23 +121,20 @@ function processDrag(s: State): void {
       if (!cur.started && util.distanceSq(cur.pos, cur.origPos) >= Math.pow(s.draggable.distance, 2))
         cur.started = true;
       if (cur.started) {
-        let currElement = cur.element;
         // support lazy elements
-        if (typeof currElement === 'function') {
-          const found = currElement();
+        if (typeof cur.element === 'function') {
+          const found = cur.element();
           if (!found) return;
           found.ogDragging = true;
           found.classList.add('dragging');
-          currElement = found;
+          cur.element = found;
         }
 
-        if (typeof currElement !== 'function') {
-          const bounds = s.dom.bounds();
-          util.translateAbs(currElement as HTMLElement, [
-            cur.pos[0] - bounds.left - bounds.width / 8,
-            cur.pos[1] - bounds.top - bounds.height / 8,
-          ]);
-        }
+        const bounds = s.dom.bounds();
+        util.translateAbs(cur.element, [
+          cur.pos[0] - bounds.left - bounds.width / 8,
+          cur.pos[1] - bounds.top - bounds.height / 8,
+        ]);
       }
     }
     processDrag(s);

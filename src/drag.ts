@@ -130,11 +130,14 @@ function processDrag(s: State): void {
           cur.element = found;
         }
 
-        const bounds = s.dom.bounds();
-        util.translateAbs(cur.element, [
-          cur.pos[0] - bounds.left - bounds.width / 8,
-          cur.pos[1] - bounds.top - bounds.height / 8,
-        ]);
+        const currElement = cur.element;
+        if (typeof currElement !== 'function') {
+          const bounds = s.dom.bounds();
+          util.translateAbs(currElement as HTMLElement, [
+            cur.pos[0] - bounds.left - bounds.width / 8,
+            cur.pos[1] - bounds.top - bounds.height / 8,
+          ]);
+        }
       }
     }
     processDrag(s);

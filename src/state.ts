@@ -88,7 +88,7 @@ export interface HeadlessState {
     change?: () => void; // called after the situation changes on the board
     // called after a piece has been moved.
     // capturedPiece is undefined or like {color: 'white'; 'role': 'queen'}
-    move?: (orig: og.Key, dest: og.Key, capturedPiece?: og.Piece) => void;
+    move?: (orig: og.Key, dest: og.Key, pieces: og.Pieces, capturedPiece?: og.Piece) => void;
     dropNewPiece?: (piece: og.Piece, key: og.Key) => void;
     select?: (key: og.Key) => void; // called when a square is selected
     insert?: (elements: og.Elements) => void; // when the board DOM has been (re)inserted

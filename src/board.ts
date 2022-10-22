@@ -103,7 +103,7 @@ export function baseMove(state: HeadlessState, orig: og.Key, dest: og.Key): og.P
   if (orig === dest || !origPiece) return false;
   const captured = destPiece && destPiece.color !== origPiece.color ? destPiece : undefined;
   if (dest === state.selected) unselect(state);
-  callUserFunction(state.events.move, orig, dest, captured);
+  callUserFunction(state.events.move, orig, dest, state.pieces, captured);
   if (!tryAutoCastle(state, orig, dest)) {
     state.pieces.set(dest, origPiece);
     state.pieces.delete(orig);

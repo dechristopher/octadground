@@ -9,8 +9,8 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "17",
     "@rollup/plugin-typescript": "8",
-    "@typescript-eslint/eslint-plugin": "4",
-    "@typescript-eslint/parser": "4",
+    "@typescript-eslint/eslint-plugin": "7",
+    "@typescript-eslint/parser": "7",
     "eslint": "7",
     "prettier": "2",
     "rollup": "2",

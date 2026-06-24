@@ -2,7 +2,7 @@ import * as og from './types';
 
 export const invRanks: readonly og.Rank[] = [...og.ranks].reverse();
 
-export const allKeys: readonly og.Key[] = Array.prototype.concat(...og.files.map(c => og.ranks.map(r => c + r)));
+export const allKeys: readonly og.Key[] = Array.prototype.concat(...og.files.map(f => og.ranks.map(r => f + r)));
 
 export const pos2key = (pos: og.Pos): og.Key => allKeys[4 * pos[0] + pos[1]];
 
@@ -93,7 +93,7 @@ export const createEl = (tagName: string, className?: string): HTMLElement => {
 export function computeSquareCenter(key: og.Key, asWhite: boolean, bounds: ClientRect): og.NumberPair {
   const pos = key2pos(key);
   if (!asWhite) {
-    pos[0] = 3- pos[0];
+    pos[0] = 3 - pos[0];
     pos[1] = 3 - pos[1];
   }
   return [

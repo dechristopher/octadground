@@ -80,8 +80,11 @@ function pieceCloseTo(s: State, pos: og.NumberPair): boolean {
   const asWhite = board.whitePov(s),
     bounds = s.dom.bounds(),
     radiusSq = Math.pow(bounds.width / 4, 2);
-  for (const key in s.pieces) {
-    const center = util.computeSquareCenter(key as og.Key, asWhite, bounds);
+  // BUG FIX: `for...in` enumerates an object's properties, but `s.pieces` is a Map, so the loop body
+  // never ran and this always returned false (the touch-scroll suppression near a piece was dead).
+  // Iterate the Map's keys with `for...of` instead.
+  for (const key of s.pieces.keys()) {
+    const center = util.computeSquareCenter(key, asWhite, bounds);
     if (util.distanceSq(center, pos) <= radiusSq) return true;
   }
   return false;

@@ -115,20 +115,26 @@ export function configure(state: HeadlessState, config: Config): void {
   // no need for such short animations
   if (!state.animation.duration || state.animation.duration < 100) state.animation.enabled = false;
 
+  // BUG FIX: this block was ported from chessground and never adapted to octad. It looked the king up
+  // on `'e' + rank` ('e1'/'e4') and referenced a 'g' file — none of which exist on a 4x4 board (files
+  // a-d; the king starts on b1/c4). `pieces.get('e1')` was always undefined, so it returned early and
+  // `pieceCastle: false` silently did nothing.
+  // In octad the king only ever castles by moving directly onto a friendly knight/pawn, and a normal
+  // king move can never land on a friendly-occupied square — so to honor `pieceCastle: false` we strip
+  // any king destination that lands on a same-colored piece. Iterating every king origin keeps this
+  // color-agnostic (works for movable.color 'white', 'black', or 'both').
   if (!state.movable.pieceCastle && state.movable.dests) {
-    const rank = state.movable.color === 'white' ? '1' : '4',
-      kingStartPos = ('e' + rank) as og.Key,
-      dests = state.movable.dests.get(kingStartPos),
-      king = state.pieces.get(kingStartPos);
-    if (!dests || !king || king.role !== 'king') return;
-    state.movable.dests.set(
-      kingStartPos,
-      dests.filter(
-        d =>
-          !(d === 'a' + rank && dests.includes(('c' + rank) as og.Key)) &&
-          !(d === 'd' + rank && dests.includes(('g' + rank) as og.Key))
-      )
-    );
+    for (const [orig, dests] of state.movable.dests) {
+      const king = state.pieces.get(orig);
+      if (king?.role !== 'king') continue;
+      state.movable.dests.set(
+        orig,
+        dests.filter(d => {
+          const destPiece = state.pieces.get(d);
+          return !(destPiece && destPiece.color === king.color);
+        })
+      );
+    }
   }
 }
 
@@ -140,5 +146,8 @@ function merge(base: any, extend: any): void {
 }
 
 function isObject(o: unknown): boolean {
-  return typeof o === 'object';
+  // BUG FIX: guard against null (typeof null === 'object') so merge() doesn't recurse into it and
+  // throw. Arrays are excluded too: config arrays (lastMove, shapes, ...) should replace wholesale,
+  // not merge element-by-element. Maps (e.g. dests) are not arrays and are handled before merge().
+  return typeof o === 'object' && o !== null && !Array.isArray(o);
 }

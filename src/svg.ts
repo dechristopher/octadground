@@ -267,7 +267,9 @@ function renderArrow(
 
 function renderPiece(baseUrl: string, pos: og.Pos, piece: DrawShapePiece, bounds: ClientRect): SVGElement {
   const o = pos2px(pos, bounds),
-    size = (bounds.width / 8) * (piece.scale || 1),
+    // BUG FIX: a square is `width / 4` on a 4x4 board (was `width / 8`, an 8x8 leftover that
+    // rendered drop/shape pieces at half a square).
+    size = (bounds.width / 4) * (piece.scale || 1),
     name = piece.color[0] + (piece.role === 'knight' ? 'n' : piece.role[0]).toUpperCase();
   return setAttributes(createElement('image'), {
     className: `${piece.role} ${piece.color}`,

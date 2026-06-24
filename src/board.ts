@@ -72,28 +72,28 @@ function tryAutoCastle(state: HeadlessState, orig: og.Key, dest: og.Key): boolea
 
   const origPos = key2pos(orig);
   const destPos = key2pos(dest);
+  // castling stays on a single back rank: white rank 1 (index 0) or black rank 4 (index 3)
   if ((origPos[1] !== 0 && origPos[1] !== 3) || origPos[1] !== destPos[1]) return false;
-  if (origPos[0] === 1 && state.pieces.has(dest)) {
-    if (destPos[0] === 0) dest = pos2key([0, destPos[1]]);
-    else if (destPos[0] === 2) dest = pos2key([2, destPos[1]]);
-    else if (destPos[0] === 3) dest = pos2key([3, destPos[1]]);
-  }
+  // NOTE: a previous `if (origPos[0] === 1 ...)` block reassigned `dest` to pos2key([destPos[0], ...]) —
+  // i.e. to itself — in every branch, so it was a pure no-op and has been removed.
 
-  // quit early if piece isn't a pawn or knight
-  // in octad, all starting pieces can be castled with
+  // the king castles by moving directly onto the partner piece (a knight or pawn).
+  // in octad, all starting pieces can be castled with.
   const piece = state.pieces.get(dest);
   if (!piece || piece.color !== king.color || (piece.role !== 'pawn' && piece.role !== 'knight')) return false;
 
+  // BUG FIX: the previous implementation hard-coded the result files (king -> file 2 or 0, partner ->
+  // file 1). Those constants only line up for the white king, which starts on file b (index 1). The
+  // black king starts on file c (index 2), so e.g. a black close-pawn castle sent the king to a4
+  // instead of swapping to b4 AND clobbered the far pawn already sitting on a4 (the visual bug).
+  // Pivot off the king's actual starting file so both colors castle correctly: the partner takes the
+  // king's home file and the king shifts one square toward the partner.
+  const kingFile = origPos[0],
+    rank = destPos[1];
   state.pieces.delete(orig);
   state.pieces.delete(dest);
-
-  if (origPos[0] < destPos[0]) {
-    state.pieces.set(pos2key([2, destPos[1]]), king);
-    state.pieces.set(pos2key([1, destPos[1]]), piece);
-  } else {
-    state.pieces.set(pos2key([0, destPos[1]]), king);
-    state.pieces.set(pos2key([1, destPos[1]]), piece);
-  }
+  state.pieces.set(pos2key([origPos[0] < destPos[0] ? kingFile + 1 : kingFile - 1, rank]), king);
+  state.pieces.set(pos2key([kingFile, rank]), piece);
   return true;
 }
 

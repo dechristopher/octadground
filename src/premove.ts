@@ -11,9 +11,12 @@ function pawn(color: og.Color): Mobility {
   return (x1, y1, x2, y2) =>
     diff(x1, x2) < 2 &&
     (color === 'white'
-      ? // allow 2 squares from first two ranks, for horde
+      ? // allow 2 squares from the first two ranks, for horde
         y2 === y1 + 1 || (y1 <= 1 && y2 === y1 + 2 && x1 === x2)
-      : y2 === y1 - 1 || (y1 >= 6 && y2 === y1 - 2 && x1 === x2));
+      : // BUG FIX: mirror of the white case. The old bound was `y1 >= 6`, an 8x8 leftover (black's
+        // rank-7 start) that is impossible on a 4-rank board, so black pawns could never premove two
+        // squares. On a 4x4 board the top two ranks are indices 3 and 2, hence `y1 >= 2`.
+        y2 === y1 - 1 || (y1 >= 2 && y2 === y1 - 2 && x1 === x2));
 }
 
 export const knight: Mobility = (x1, y1, x2, y2) => {

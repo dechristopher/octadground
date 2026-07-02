@@ -82,18 +82,22 @@ function tryAutoCastle(state: HeadlessState, orig: og.Key, dest: og.Key): boolea
   const piece = state.pieces.get(dest);
   if (!piece || piece.color !== king.color || (piece.role !== 'pawn' && piece.role !== 'knight')) return false;
 
-  // BUG FIX: the previous implementation hard-coded the result files (king -> file 2 or 0, partner ->
-  // file 1). Those constants only line up for the white king, which starts on file b (index 1). The
-  // black king starts on file c (index 2), so e.g. a black close-pawn castle sent the king to a4
-  // instead of swapping to b4 AND clobbered the far pawn already sitting on a4 (the visual bug).
-  // Pivot off the king's actual starting file so both colors castle correctly: the partner takes the
-  // king's home file and the king shifts one square toward the partner.
+  // adjacent partners swap squares; distant partners (two or three files apart)
+  // cross instead — the king lands one square short of the partner and the
+  // partner lands on the square just beyond the king
   const kingFile = origPos[0],
+    destFile = destPos[0],
     rank = destPos[1];
+  const dir = destFile > kingFile ? 1 : -1;
   state.pieces.delete(orig);
   state.pieces.delete(dest);
-  state.pieces.set(pos2key([origPos[0] < destPos[0] ? kingFile + 1 : kingFile - 1, rank]), king);
-  state.pieces.set(pos2key([kingFile, rank]), piece);
+  if (Math.abs(destFile - kingFile) === 1) {
+    state.pieces.set(dest, king);
+    state.pieces.set(orig, piece);
+  } else {
+    state.pieces.set(pos2key([destFile - dir, rank]), king);
+    state.pieces.set(pos2key([destFile - 2 * dir, rank]), piece);
+  }
   return true;
 }
 

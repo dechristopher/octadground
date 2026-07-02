@@ -49,39 +49,19 @@ function king(color: og.Color, castleFiles: number[], canCastle: boolean): Mobil
 function validCastleFiles(pieces: og.Pieces, color: og.Color) {
   const backRank = color === 'white' ? '1' : '4';
 
-  const knightFile = color === 'white' ? 'a' : 'd';
-  const closePawnFile = color === 'white' ? 'c' : 'b';
-  const farPawnFile = color === 'white' ? 'd' : 'a';
-
-  const farPawnKey = color === 'white' ? 3 : 0;
-
-  let closePawnObstructing = false;
-
-  let files = [];
+  // castling is position-relative: the king may castle with any friendly
+  // pawn or knight on its back rank, wherever the two deployed. Premoves are
+  // optimistic — rights, blocking, and check safety are validated server-side
+  // when the premove executes, and the position may change before then.
+  const files: number[] = [];
   for (const [key, piece] of pieces) {
-    // check knight
-    if (key[1] === backRank && key[0] === knightFile && piece.color === color && piece.role === 'knight') {
+    if (
+      key[1] === backRank &&
+      piece.color === color &&
+      (piece.role === 'pawn' || piece.role === 'knight')
+    ) {
       files.push(util.key2pos(key)[0]);
-      continue
     }
-    // check close pawn
-    if (key[1] === backRank && key[0] === closePawnFile && piece.color === color && piece.role === 'pawn') {
-      files.push(util.key2pos(key)[0]);
-      closePawnObstructing = true;
-      continue
-    }
-    // check far pawn
-    if (key[1] === backRank && key[0] === farPawnFile && piece.color === color && piece.role === 'pawn') {
-      // ensure close pawn isn't in the way
-      if (!closePawnObstructing) {
-        files.push(util.key2pos(key)[0]);
-      }
-    }
-  }
-
-  // remove far pawn from potential file list if it was checked before close pawn
-  if (closePawnObstructing && files.includes(farPawnKey)) {
-    files = files.filter((f) => f !== farPawnKey);
   }
 
   return files;

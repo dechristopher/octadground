@@ -1,6 +1,6 @@
 {
   "name": "octadground",
-  "version": "1.0.3",
+  "version": "7.12.0",
   "description": "lioctad.org octad ui",
   "type": "commonjs",
   "main": "octadground.js",

@@ -270,7 +270,6 @@ piece.fading {
   left: 0;
   flex-flow: row;
   width: 100%;
-  text-transform: uppercase;
 }
 
 .og-wrap coords.files.black {
@@ -282,10 +281,10 @@ piece.fading {
 }
 
 .og-wrap coords.ranks coord {
-  padding: 1.2cqw 0 0 1.2cqw;
+  padding: 0.2cqw 0 0 0.5cqw;
 }
 
 .og-wrap coords.files coord {
   text-align: right;
-  padding: 0 1.2cqw 1.2cqw 0;
+  padding: 0 0.5cqw 0.1cqw 0;
 }

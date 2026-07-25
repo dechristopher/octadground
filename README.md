@@ -1,7 +1,7 @@
 # Octadground
 
 _Octadground_ is a free/libre open source octad UI developed for
-[lioctad.org](https://lioctad.org).
+[octad.gg](https://octad.gg).
 It targets modern browsers and is based off of the open source [Chessground](https://github.com/ornicar/chessground)
 library.
 
@@ -19,7 +19,7 @@ Please read more about GPL for JavaScript on [greendrake.info/#nfy0](http://gree
 
 ## Features
 
-Octadground is designed to fulfill all lioctad.org web and mobile apps needs, so it is pretty featureful.
+Octadground is designed to fulfill all octad.gg web and mobile apps needs, so it is pretty featureful.
 
 - Well typed with TypeScript
 - Fast. Uses a custom DOM diff algorithm to reduce DOM writes to the absolute minimum.

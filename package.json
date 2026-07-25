@@ -1,7 +1,7 @@
 {
   "name": "octadground",
-  "version": "7.12.2",
-  "description": "lioctad.org octad ui",
+  "version": "7.13.0",
+  "description": "octad.gg octad ui",
   "type": "commonjs",
   "main": "octadground.js",
   "typings": "octadground.d.ts",
@@ -36,9 +36,11 @@
   ],
   "repository": "https://github.com/dechristopher/octadground",
   "keywords": [
+    "lio",
     "octad",
     "lioctad",
     "lioctad.org",
+    "octad.gg",
     "board",
     "ui",
     "typescript"

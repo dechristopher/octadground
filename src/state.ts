@@ -176,7 +176,7 @@ export function defaults(): HeadlessState {
         paleGrey: { key: 'pgr', color: '#4a4a4a', opacity: 0.35, lineWidth: 15 },
       },
       pieces: {
-        baseUrl: 'https://lioctad.org/res/img/cburnett/',
+        baseUrl: 'https://octad.gg/res/img/cburnett/',
       },
       prevSvgHash: '',
     },
